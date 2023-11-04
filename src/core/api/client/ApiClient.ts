@@ -1,6 +1,6 @@
 
 
-const BASE_URL = ""
+const BASE_URL = 'https://graphql.anilist.co'
 
 let accessToken: string | null = null;
 

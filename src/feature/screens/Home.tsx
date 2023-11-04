@@ -1,11 +1,41 @@
-import { View, Text, SafeAreaView, ScrollView, Button, Pressable, StyleSheet } from 'react-native'
-import React from 'react'
+import { View, Text, SafeAreaView, ScrollView, StyleSheet, RefreshControl, ActivityIndicator } from 'react-native'
+import React, { useEffect } from 'react'
 import { useTheme } from '@react-navigation/native';
-import Search from '../../shared/components/SearchBar';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import ApiService from '../../core/api/services/TestService';
 
 const Home = ({ navigation }: any) => {
+    const [isLoading, setLoading] = React.useState(false);
+    const [isRefreshing, setRefreshing] = React.useState(false);
     const colors = useTheme().colors;
+
+    const api = new ApiService();
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        fetchSliderData();
+    }, []);
+
+    const fetchSliderData = () => {
+        setLoading(true)
+        api.getTrending()
+            .then(res => {
+                if (res) {
+                    console.log(res);
+                }
+                setLoading(false);
+                setRefreshing(false);
+            })
+            .catch((e) => {
+                console.log('err:', e);
+                setLoading(false);
+                setRefreshing(false);
+            })
+    }
+
+    useEffect(() => {
+        fetchSliderData();
+    }, [])
+
     return (
         <SafeAreaView>
             {/* <View style={[styles.SearchBar, { borderColor: colors.border, borderWidth: 1, height: 40 }]} >
@@ -13,11 +43,18 @@ const Home = ({ navigation }: any) => {
                 <Search />
             </View> */}
             <ScrollView
-                contentInsetAdjustmentBehavior="automatic">
+                contentInsetAdjustmentBehavior="automatic" refreshControl={
+                    <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+                } >
                 <View style={{ backgroundColor: colors.background }} >
                     <Text style={{ color: colors.text }} >Home</Text>
+
+
                 </View>
             </ScrollView>
+
+            {isLoading && <ActivityIndicator size='large' />}
+
         </SafeAreaView>
     )
 }
