@@ -52,6 +52,7 @@ const Home = ({ navigation }: any) => {
             <View style={{ backgroundColor: colors.background }} >
                 <FlatList
                     contentContainerStyle={styles.listContainer}
+                    ItemSeparatorComponent={() => <View style={{ height: 6 }} />}
                     numColumns={numColumns}
                     ListHeaderComponent={
                         <View style={[styles.searchBar, { backgroundColor: colors.border }]} >
@@ -79,7 +80,7 @@ const Home = ({ navigation }: any) => {
                                 />
                             </View>
                             {clicked && (
-                                <Ionicon name='close' size={22} color={colors.text} style={{ marginRight: 10 }} onPress={() => {
+                                <Ionicon name='close' size={22} color={colors.text} style={{ marginRight: 6 }} onPress={() => {
                                     setSearchPhrase("")
                                     SetSearchData(null)
                                 }} />
@@ -87,10 +88,10 @@ const Home = ({ navigation }: any) => {
                         </View>}
                     data={searchData?.results}
                     renderItem={({ item }) =>
-                        <View style={{ flex: 1, flexDirection: 'column', margin: 1 }}>
+                        <View style={{ flex: 1, flexDirection: 'column', margin: 1, backgroundColor: colors.card, padding: 8, borderRadius: 14 }}>
                             <Pressable onPress={() => { navigation.navigate('Details', { id: item.id }) }} >
                                 <Image style={styles.imageThumbnail} source={{ uri: item.image }} />
-                                <Text>{item.title}</Text>
+                                <Text style={{ color: colors.text, textAlign: 'center' }} >{item.title}</Text>
                             </Pressable>
                         </View>
                     }

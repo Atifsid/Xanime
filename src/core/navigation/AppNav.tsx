@@ -7,6 +7,7 @@ import { useTheme } from '@react-navigation/native';
 import { NavStackParamList } from '../../shared/utils/NavProps';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Details from '../../feature/screens/Details';
+import Stream from '../../feature/screens/Stream';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator<NavStackParamList>();
@@ -20,6 +21,7 @@ function HomeNav() {
                 options={{ headerShown: false }}
             />
             <Stack.Screen name="Details" component={Details} />
+            <Stack.Screen name="Stream" component={Stream} />
         </Stack.Navigator>
     )
 }
