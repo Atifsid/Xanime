@@ -51,19 +51,15 @@ const Home = ({ navigation }: any) => {
         <SafeAreaView>
             <View style={{ backgroundColor: colors.background }} >
                 <FlatList
-                    contentContainerStyle={styles.lisContainer}
+                    contentContainerStyle={styles.listContainer}
                     numColumns={numColumns}
                     ListHeaderComponent={
-                        <View style={styles.searchBar} >
-                            <View style={{
-                                flexDirection: 'row',
-                                justifyContent: "space-between",
-                                alignItems: "center"
-                            }} >
+                        <View style={[styles.searchBar, { backgroundColor: colors.border }]} >
+                            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', width: '90%' }} >
                                 <FaIcon
                                     name="bars"
                                     size={20}
-                                    color="black"
+                                    color={colors.text}
                                     style={{ marginLeft: 10 }}
                                     onPress={() => navigation.openDrawer()}
                                 />
@@ -79,6 +75,7 @@ const Home = ({ navigation }: any) => {
                                     }}
                                     onSubmitEditing={handleSearch}
                                     multiline={false}
+                                    placeholderTextColor={colors.text}
                                 />
                             </View>
                             {clicked && (
@@ -106,7 +103,7 @@ const Home = ({ navigation }: any) => {
 }
 
 const styles = StyleSheet.create({
-    lisContainer: {
+    listContainer: {
         justifyContent: 'center',
     },
     imageThumbnail: {
@@ -116,9 +113,8 @@ const styles = StyleSheet.create({
     },
     searchBar: {
         flexDirection: 'row',
-        justifyContent: "space-between",
         alignItems: "center",
-        backgroundColor: "#d9dbda",
+        flex: 1,
         borderRadius: 15,
         paddingHorizontal: 10,
         marginVertical: 10,
@@ -127,6 +123,8 @@ const styles = StyleSheet.create({
     input: {
         fontSize: 14,
         marginLeft: 10,
+        flexDirection: 'row',
+        width: '100%'
     }
 });
 
