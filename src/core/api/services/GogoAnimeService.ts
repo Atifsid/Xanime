@@ -2,6 +2,7 @@ import { ApiUrl } from "../../constants/api-url-constant";
 import { DetailsResponse } from "../../models/DetailsResponse";
 import { SearchResponse } from "../../models/SearchResponse";
 import { ServerResponse } from "../../models/ServerResponse";
+import { StreamResponse } from "../../models/StreamResponse";
 import { ApiClient } from "../client/ApiClient";
 
 export default class GogoAnimeService {
@@ -29,6 +30,15 @@ export default class GogoAnimeService {
             return res
         } catch (error) {
             console.log('getServers', error);
+        }
+    }
+
+    public async getStreams(id: string, server: string) {
+        try {
+            const res = ApiClient.GetApi<StreamResponse>(`${ApiUrl.streams}${id}`, { "server": server })
+            return res
+        } catch (error) {
+            console.log('getStreams', error);
         }
     }
 }
