@@ -1,9 +1,32 @@
 import { ApiClient } from "../client/ApiClient";
 
-export default class ApiService {
+export default class AniListService {
 
 
-    //     query {
+  //     query {
+  //     Page(page: 5, perPage: 5) {
+  //         pageInfo{
+  //             total
+  //             currentPage
+  //             lastPage
+  //             hasNextPage
+  //             perPage
+  //         }
+  //         media(type: ANIME, sort: TRENDING_DESC) {
+  //             id
+  //             title {
+  //                 romaji
+  //                 english
+  //                 native
+  //                 userPreferred
+  //             }
+  //         }
+  //     }
+  // }
+
+  public async getTrending() {
+
+    //         const query = `query {
     //     Page(page: 5, perPage: 5) {
     //         pageInfo{
     //             total
@@ -15,39 +38,16 @@ export default class ApiService {
     //         media(type: ANIME, sort: TRENDING_DESC) {
     //             id
     //             title {
-    //                 romaji
-    //                 english
-    //                 native
-    //                 userPreferred
+    //               romaji
+    //               english
+    //               native
+    //               userPreferred
     //             }
     //         }
     //     }
-    // }
+    // }`
 
-    public async getTrending() {
-
-        //         const query = `query {
-        //     Page(page: 5, perPage: 5) {
-        //         pageInfo{
-        //             total
-        //             currentPage
-        //             lastPage
-        //             hasNextPage
-        //             perPage
-        //         }
-        //         media(type: ANIME, sort: TRENDING_DESC) {
-        //             id
-        //             title {
-        //               romaji
-        //               english
-        //               native
-        //               userPreferred
-        //             }
-        //         }
-        //     }
-        // }`
-
-        const query = `query ($page: Int, $perPage: Int, $search: String) {
+    const query = `query ($page: Int, $perPage: Int, $search: String) {
   Page(page: $page, perPage: $perPage) {
     pageInfo {
       total
@@ -66,13 +66,13 @@ export default class ApiService {
   }
 }`
 
-        const variables = `{ page: 1, perPage: 5, }`
+    const variables = `{ page: 1, perPage: 5, }`
 
-        try {
-            const res = await ApiClient.PostApi(`/`, { query, variables });
-            return res;
-        } catch (error) {
-            return console.log('getTrending', error);
-        }
+    try {
+      const res = await ApiClient.PostApi(`/`, { query, variables });
+      return res;
+    } catch (error) {
+      return console.log('getTrending', error);
     }
+  }
 }

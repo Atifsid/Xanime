@@ -1,6 +1,7 @@
 
 
-const BASE_URL = 'https://graphql.anilist.co'
+// const BASE_URL = 'https://graphql.anilist.co'
+const BASE_URL = 'https://api.consumet.org'
 
 let accessToken: string | null = null;
 
@@ -9,7 +10,7 @@ export const setAccessToken = (token: string | null) => {
 };
 
 export const ApiClient = {
-    GetApi: async <T>(endpoint: string, queryParams?: Record<string, string>): Promise<T> => {
+    GetApi: async <T>(endpoint: string, queryParams?: Record<string, any>): Promise<T> => {
         const url = buildUrl(endpoint, queryParams);
         const response = await fetch(url, {
             method: 'GET',

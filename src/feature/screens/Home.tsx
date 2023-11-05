@@ -1,68 +1,132 @@
-import { View, Text, SafeAreaView, ScrollView, StyleSheet, RefreshControl, ActivityIndicator } from 'react-native'
-import React, { useEffect } from 'react'
+import { View, Text, SafeAreaView, ScrollView, StyleSheet, RefreshControl, ActivityIndicator, TextInput, FlatList, Dimensions, Image, Pressable } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { useTheme } from '@react-navigation/native';
-import ApiService from '../../core/api/services/TestService';
+import FaIcon from "react-native-vector-icons/FontAwesome";
+import Ionicon from "react-native-vector-icons/Ionicons";
+import AniListService from '../../core/api/services/TestService';
+import GogoAnimeService from '../../core/api/services/GogoAnimeService';
+import { Result, SearchResponse } from '../../core/models/SearchResponse';
 
 const Home = ({ navigation }: any) => {
-    const [isLoading, setLoading] = React.useState(false);
-    const [isRefreshing, setRefreshing] = React.useState(false);
+    const numColumns = 3
+    const [isLoading, setLoading] = useState(false);
+    const [isRefreshing, setRefreshing] = useState(false);
+    const [clicked, setClicked] = useState(false);
+    const [staticData, setStatic] = useState<Array<Result>>()
     const colors = useTheme().colors;
+    const [searchData, SetSearchData] = useState<SearchResponse | null>(null)
 
-    const api = new ApiService();
+    const [searchPhrase, setSearchPhrase] = useState("");
+
+    const gogo = new GogoAnimeService();
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
-        fetchSliderData();
     }, []);
 
-    const fetchSliderData = () => {
-        setLoading(true)
-        api.getTrending()
-            .then(res => {
-                if (res) {
-                    console.log(res);
-                }
-                setLoading(false);
-                setRefreshing(false);
-            })
-            .catch((e) => {
-                console.log('err:', e);
-                setLoading(false);
-                setRefreshing(false);
-            })
+    const handleSearch = () => {
+        if (searchPhrase.length > 0) {
+            setLoading(true);
+            gogo.search(searchPhrase)
+                .then((res) => {
+                    if (res) {
+                        SetSearchData(res);
+                    }
+                    setLoading(false);
+                })
+                .catch(e => console.log(e))
+        }
     }
 
-    useEffect(() => {
-        fetchSliderData();
-    }, [])
+    if (isLoading) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} >
+                <ActivityIndicator size="large" />
+            </View>
+        );
+    }
+
 
     return (
         <SafeAreaView>
-            {/* <View style={[styles.SearchBar, { borderColor: colors.border, borderWidth: 1, height: 40 }]} >
-                <Ionicons name='menu' size={30} color={colors.text} onPress={() => navigation.openDrawer()} />
-                <Search />
-            </View> */}
-            <ScrollView
-                contentInsetAdjustmentBehavior="automatic" refreshControl={
-                    <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
-                } >
-                <View style={{ backgroundColor: colors.background }} >
-                    <Text style={{ color: colors.text }} >Home</Text>
+            <View style={{ backgroundColor: colors.background }} >
+                <FlatList
+                    contentContainerStyle={styles.lisContainer}
+                    numColumns={numColumns}
+                    ListHeaderComponent={
+                        <View style={styles.searchBar} >
+                            <View style={{
+                                flexDirection: 'row',
+                                justifyContent: "space-between",
+                                alignItems: "center"
+                            }} >
+                                <FaIcon
+                                    name="bars"
+                                    size={20}
+                                    color="black"
+                                    style={{ marginLeft: 10 }}
+                                    onPress={() => navigation.openDrawer()}
+                                />
 
-
-                </View>
-            </ScrollView>
-
-            {isLoading && <ActivityIndicator size='large' />}
+                                <TextInput
+                                    style={[styles.input, { color: colors.text }]}
+                                    placeholder="Enter keywords"
+                                    value={searchPhrase}
+                                    onChangeText={(text) => { setSearchPhrase(text) }}
+                                    onEndEditing={() => { }}
+                                    onFocus={() => {
+                                        setClicked(true);
+                                    }}
+                                    onSubmitEditing={handleSearch}
+                                    multiline={false}
+                                />
+                            </View>
+                            {clicked && (
+                                <Ionicon name='close' size={22} color={colors.text} style={{ marginRight: 10 }} onPress={() => {
+                                    setSearchPhrase("")
+                                    SetSearchData(null)
+                                }} />
+                            )}
+                        </View>}
+                    data={searchData?.results}
+                    renderItem={({ item }) =>
+                        <View style={{ flex: 1, flexDirection: 'column', margin: 1 }}>
+                            <Pressable onPress={() => { navigation.navigate('Details', { id: item.id }) }} >
+                                <Image style={styles.imageThumbnail} source={{ uri: item.image }} />
+                                <Text>{item.title}</Text>
+                            </Pressable>
+                        </View>
+                    }
+                    keyExtractor={(item) => item.id}
+                />
+            </View>
 
         </SafeAreaView>
     )
 }
 
 const styles = StyleSheet.create({
-    SearchBar: {
-        flexDirection: 'row',
+    lisContainer: {
+        justifyContent: 'center',
+    },
+    imageThumbnail: {
+        justifyContent: 'center',
         alignItems: 'center',
+        height: 100,
+    },
+    searchBar: {
+        flexDirection: 'row',
+        justifyContent: "space-between",
+        alignItems: "center",
+        backgroundColor: "#d9dbda",
+        borderRadius: 15,
+        paddingHorizontal: 10,
+        marginVertical: 10,
+        marginHorizontal: 10
+    },
+    input: {
+        fontSize: 14,
+        marginLeft: 10,
     }
 });
 
