@@ -10,6 +10,7 @@ import { Result, SearchResponse } from '../../core/models/SearchResponse';
 const Home = ({ navigation }: any) => {
     const numColumns = 3
     const [isLoading, setLoading] = useState(false);
+    const [isEndLoaderVisible, setEndLoaderVisible] = useState(false);
     const [isRefreshing, setRefreshing] = useState(false);
     const [clicked, setClicked] = useState(false);
     const [staticData, setStatic] = useState<Array<Result>>()
@@ -17,6 +18,8 @@ const Home = ({ navigation }: any) => {
     const [searchData, SetSearchData] = useState<SearchResponse | null>(null)
 
     const [searchPhrase, setSearchPhrase] = useState("");
+
+    const [items, setItems] = useState<Result[]>([]);
 
     const gogo = new GogoAnimeService();
 
@@ -27,12 +30,28 @@ const Home = ({ navigation }: any) => {
     const handleSearch = () => {
         if (searchPhrase.length > 0) {
             setLoading(true);
-            gogo.search(searchPhrase)
+            gogo.search(searchPhrase, 1)
                 .then((res) => {
                     if (res) {
                         SetSearchData(res);
+                        setItems(res.results)
                     }
                     setLoading(false);
+                })
+                .catch(e => console.log(e))
+        }
+    }
+
+    const loadMore = () => {
+        if (searchData?.hasNextPage) {
+            setEndLoaderVisible(true);
+            gogo.search(searchPhrase, parseInt(searchData.currentPage, 10) + 1)
+                .then((res) => {
+                    if (res) {
+                        SetSearchData(res);
+                        setItems(items.concat(res.results))
+                    }
+                    setEndLoaderVisible(false);
                 })
                 .catch(e => console.log(e))
         }
@@ -83,10 +102,11 @@ const Home = ({ navigation }: any) => {
                                 <Ionicon name='close' size={22} color={colors.text} style={{ marginRight: 6 }} onPress={() => {
                                     setSearchPhrase("")
                                     SetSearchData(null)
+                                    setItems([])
                                 }} />
                             )}
                         </View>}
-                    data={searchData?.results}
+                    data={items}
                     renderItem={({ item }) =>
                         <View style={{ flex: 1, flexDirection: 'column', margin: 1, backgroundColor: colors.card, padding: 8, borderRadius: 14 }}>
                             <Pressable onPress={() => { navigation.navigate('Details', { id: item.id }) }} >
@@ -96,6 +116,8 @@ const Home = ({ navigation }: any) => {
                         </View>
                     }
                     keyExtractor={(item) => item.id}
+                    onEndReachedThreshold={1}
+                    onEndReached={loadMore}
                 />
             </View>
 
