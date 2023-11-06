@@ -4,6 +4,8 @@ import GogoAnimeService from '../../core/api/services/GogoAnimeService'
 import { FlatList } from 'react-native-gesture-handler';
 import { useTheme } from '@react-navigation/native';
 import { StreamResponse } from '../../core/models/StreamResponse';
+import VideoPlayer from 'react-native-media-console';
+import { useAnimations } from '@react-native-media-console/reanimated';
 
 const Stream = (props: any) => {
     const colors = useTheme().colors;
@@ -11,13 +13,14 @@ const Stream = (props: any) => {
     const [stream, setStream] = useState<StreamResponse | null>(null)
     const [isLoading, setLoading] = useState(false)
 
+    const [url, setUrl] = useState<string>()
+
     const getGogoCdn = () => {
         setStream(null)
         setLoading(true)
         api.getStreams(props.route.params.id, "gogocdn")
             .then((res) => {
                 if (res) {
-                    console.log(res, 'gogocdn');
                     setStream(res)
                 }
                 setLoading(false)
@@ -31,7 +34,6 @@ const Stream = (props: any) => {
         api.getStreams(props.route.params.id, "vidstreaming")
             .then((res) => {
                 if (res) {
-                    console.log(res, 'vidstreaming');
                     setStream(res)
                 }
                 setLoading(false)
@@ -45,7 +47,6 @@ const Stream = (props: any) => {
         api.getStreams(props.route.params.id, "streamsb")
             .then((res) => {
                 if (res) {
-                    console.log(res, 'streamsb');
                     setStream(res)
                 }
                 setLoading(false)
@@ -57,11 +58,6 @@ const Stream = (props: any) => {
     if (isLoading) {
         return (
             <View>
-                <View style={{ flex: 1 }}>
-
-                    <FlatList data={undefined} renderItem={undefined} />
-
-                </View>
                 <View style={{ justifyContent: 'center', alignItems: 'center' }} >
                     <ActivityIndicator size="large" />
                 </View>
@@ -74,11 +70,23 @@ const Stream = (props: any) => {
 
             {!isLoading && stream &&
                 <View>
+                    {/* {url && url.length > 0 &&
+                        <VideoPlayer
+                            style={{ flex: 1 }}
+                            useAnimations={useAnimations}
+                            source={{ uri: url }}
+                            navigator={props.navigator}
+                        />
+                    } */}
                     <FlatList
                         horizontal={true}
                         data={stream.sources} renderItem={(item) =>
                             <Pressable style={{ padding: 10, alignContent: 'space-around', backgroundColor: colors.card, margin: 10, borderColor: colors.text, borderWidth: 1, borderRadius: 14 }}
-                                onPress={() => { }}
+                                onPress={() => {
+                                    setUrl(item.item.url)
+                                    console.log(url);
+                                    props.navigation.navigate('Player', { url: item.item.url })
+                                }}
                             >
                                 <Text style={{ color: colors.text }} >{item.item.quality}</Text>
                             </Pressable>

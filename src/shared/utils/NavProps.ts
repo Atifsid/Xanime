@@ -4,6 +4,7 @@ export type NavStackParamList = {
     HomeScreen: undefined;
     Details: undefined;
     Stream: undefined;
+    Player: undefined;
 };
 
 export type NavProps = NativeStackScreenProps<NavStackParamList>;
