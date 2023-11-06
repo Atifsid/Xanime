@@ -1,19 +1,9 @@
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
+import { StyleSheet, View } from 'react-native'
+import React from 'react'
 import VideoPlayer from 'react-native-media-console'
 import { useAnimations } from '@react-native-media-console/reanimated'
 
 const Player = (props: any) => {
-
-    const [isPreLoading, setIsPreLoading] = useState(false)
-    const [isBuffering, setIsBuffering] = useState(false)
-
-    if (isBuffering) {
-        return (
-            <ActivityIndicator size='large'></ActivityIndicator>
-        )
-    }
-
     return (
         <View style={{ flex: 1 }} >
             <VideoPlayer
@@ -22,6 +12,7 @@ const Player = (props: any) => {
                 source={{ uri: props.route.params.url }}
                 navigator={props.navigator}
                 style={styles.backgroundVideo}
+                onEnterFullscreen={() => { }}
             />
         </View>
     )

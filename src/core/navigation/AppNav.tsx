@@ -24,7 +24,7 @@ function HomeNav() {
             <Stack.Screen name="Details" component={Details} />
             <Stack.Screen name="Stream" component={Stream} />
             <Stack.Screen name="Player" component={Player}
-                options={{ headerShown: false }}
+                options={{ headerShown: false, orientation: 'landscape' }}
             />
         </Stack.Navigator>
     )
